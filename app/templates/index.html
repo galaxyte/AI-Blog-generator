@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Blog Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}" />
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-200">
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+      <div class="mx-auto flex max-w-5xl flex-col gap-3 px-6 py-10 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold text-white">AI Blog Generator</h1>
+          <p class="text-sm text-slate-400">
+            Generate SEO-optimised long-form articles in seconds. Provide up to ten titles and let the AI handle the rest.
+          </p>
+        </div>
+        <div class="flex gap-3 text-sm">
+          <a href="{{ url_for('list_blogs') }}" class="btn-secondary">View All Blogs</a>
+          <a href="https://platform.openai.com/docs" target="_blank" rel="noreferrer" class="btn-secondary">OpenAI Docs</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-6 pb-16 pt-8">
+      {% if warnings %}
+        <section class="mb-6 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-200">
+          <p class="font-semibold uppercase tracking-wide text-amber-300">Warnings</p>
+          <ul class="mt-2 list-disc space-y-1 pl-5">
+            {% for warning in warnings %}
+              <li>{{ warning }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if message %}
+        <section class="mb-6 rounded-xl border border-emerald-500/50 bg-emerald-500/15 p-4 text-sm text-emerald-200">
+          {{ message }}
+        </section>
+      {% endif %}
+
+      <section class="glass-panel">
+        <div class="flex flex-col gap-2">
+          <h2 class="text-xl font-semibold text-white">Generate Blogs</h2>
+          <p class="text-sm text-slate-400">
+            Paste topics separated by commas or line breaks. The AI will generate 600–800 word articles for each title.
+          </p>
+        </div>
+
+        <form method="post" action="{{ url_for('generate_blogs') }}" class="mt-6 flex flex-col gap-5">
+          <label class="flex flex-col gap-2">
+            <span class="text-sm font-medium text-slate-300">Blog titles or topics</span>
+            <textarea
+              name="titles"
+              rows="8"
+              required
+              class="textarea"
+              placeholder="AI trends in 2025&#10;How to build a remote team&#10;Benefits of mindful productivity"
+            ></textarea>
+            <span class="text-xs text-slate-500">Enter between 1 and 10 titles. Duplicate entries are ignored.</span>
+          </label>
+
+          <label class="flex flex-col gap-2 sm:w-64">
+            <span class="text-sm font-medium text-slate-300">Tone</span>
+            <select name="tone" class="select">
+              {% for option in tones %}
+                <option value="{{ option }}">{{ option }}</option>
+              {% endfor %}
+            </select>
+          </label>
+
+          <button type="submit" class="btn-primary">Generate Blogs</button>
+        </form>
+      </section>
+
+      <section class="mt-12">
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <h3 class="text-lg font-semibold text-white">Recent blogs</h3>
+          <a href="{{ url_for('list_blogs') }}" class="text-sm text-indigo-300 hover:text-indigo-200">See all</a>
+        </div>
+
+        {% if recent_blogs %}
+          <div class="grid gap-6 md:grid-cols-2">
+            {% for blog in recent_blogs %}
+              <article class="blog-card">
+                <h4 class="text-lg font-semibold text-white">{{ blog.title }}</h4>
+                <p class="mt-2 text-sm text-slate-400">{{ blog.content[:150] }}{% if blog.content|length > 150 %}...{% endif %}</p>
+                <a href="{{ url_for('list_blogs') }}#blog-{{ blog.id }}" class="btn-inline mt-4 text-sm">Open in library</a>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-sm text-slate-500">No blogs generated yet. Start by entering a few titles above.</p>
+        {% endif %}
+      </section>
+    </main>
+
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+      Generated content is for demonstration only. Review before publishing.
+    </footer>
+  </body>
+</html>
+

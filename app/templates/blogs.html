@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blog Library | AI Blog Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}" />
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-200">
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+      <div class="mx-auto flex max-w-5xl flex-col gap-3 px-6 py-8 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 class="text-3xl font-semibold text-white">Blog Library</h1>
+          <p class="text-sm text-slate-400">
+            Browse all generated content. Regenerate to refresh ideas or download articles as text files.
+          </p>
+        </div>
+        <a href="{{ url_for('index') }}" class="btn-secondary">Create New Blogs</a>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-6 pb-16 pt-8">
+      {% if message %}
+        <section class="mb-6 rounded-xl border border-emerald-500/50 bg-emerald-500/15 p-4 text-sm text-emerald-200">
+          {{ message }}
+        </section>
+      {% endif %}
+
+      {% if blogs %}
+        <div class="grid gap-6 md:grid-cols-2">
+          {% for blog in blogs %}
+            <article id="blog-{{ blog.id }}" class="blog-card">
+              <div class="flex flex-col gap-2">
+                <span class="text-xs uppercase tracking-wide text-indigo-300">{{ blog.tone }}</span>
+                <h2 class="text-lg font-semibold text-white">{{ blog.title }}</h2>
+                <p class="text-sm text-slate-400">{{ blog.preview }}</p>
+              </div>
+
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  class="btn-inline"
+                  data-modal-open="modal-{{ blog.id }}"
+                >
+                  Read More
+                </button>
+                <form method="post" action="{{ url_for('regenerate_blog', blog_id=blog.id) }}">
+                  <button type="submit" class="btn-secondary">Regenerate</button>
+                </form>
+                <a href="{{ url_for('download_blog', blog_id=blog.id) }}" class="btn-secondary">Download</a>
+              </div>
+
+              <dialog id="modal-{{ blog.id }}" class="blog-modal">
+                <div class="flex items-start justify-between gap-4">
+                  <h3 class="text-xl font-semibold text-white">{{ blog.title }}</h3>
+                  <button type="button" class="btn-close" data-modal-close="modal-{{ blog.id }}">×</button>
+                </div>
+                <p class="mt-2 text-xs uppercase tracking-wide text-slate-400">Tone: {{ blog.tone }}</p>
+                <article class="prose prose-invert mt-4 max-w-none">
+                  {% for paragraph in blog.content.split('\n') %}
+                    {% if paragraph.strip() %}
+                      <p>{{ paragraph }}</p>
+                    {% else %}
+                      <br />
+                    {% endif %}
+                  {% endfor %}
+                </article>
+              </dialog>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-sm text-slate-500">
+          No blogs have been generated yet. <a href="{{ url_for('index') }}" class="text-indigo-300 hover:text-indigo-200">Create one now.</a>
+        </p>
+      {% endif %}
+    </main>
+
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+      Generated content is for demonstration only. Review before publishing.
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const openButtons = document.querySelectorAll("[data-modal-open]");
+        const closeButtons = document.querySelectorAll("[data-modal-close]");
+
+        openButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const target = document.getElementById(btn.dataset.modalOpen);
+            if (target) target.showModal();
+          });
+        });
+
+        closeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const target = document.getElementById(btn.dataset.modalClose);
+            if (target) target.close();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
+
