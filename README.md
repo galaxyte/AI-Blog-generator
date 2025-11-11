@@ -113,19 +113,9 @@ Artificial intelligence is no longer reserved for enterprise giants...
 ...
 ```
 
-### Screenshot Placeholders
-
-- Home: `docs/screenshots/home.png`
-- Library: `docs/screenshots/library.png`
-
-(Add actual screenshots when presenting the project.)
-
 ## Testing the AI Flow
 
 The app defaults to `gpt-4o-mini`. To minimise costs during demos you can switch to a cheaper model by adjusting `OPENAI_MODEL` in `.env`. All OpenAI calls are wrapped with error handling; the UI will surface meaningful alerts if a request fails.
 
-## Disclaimer
-
-> Generated content is for demonstration only. Review and edit before publishing.
 
 
