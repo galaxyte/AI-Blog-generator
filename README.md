@@ -2,6 +2,8 @@
 
 AI Blog Generator is an end-to-end FastAPI web application that produces SEO-ready blog articles from simple prompts. Supply up to ten topics, select an optional tone, and the platform will craft long-form content using OpenAI, persist each article to SQLite, and present them within an elegant Tailwind-powered dashboard.
 
+🔗 **Live Demo:** [https://ai-blog-generator-p06n.onrender.com/](https://ai-blog-generator-p06n.onrender.com/)
+
 ## Features
 
 - Bulk-generate 600–800 word blog posts from up to ten titles in a single batch.
